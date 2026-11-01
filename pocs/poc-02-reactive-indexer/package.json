@@ -1,0 +1,27 @@
+{
+  "name": "poc-02-reactive-indexer",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "watch": "bun run src/index.ts watch",
+    "build:claude": "bun run src/index.ts build",
+    "bench": "bun run src/index.ts bench",
+    "test": "bun test",
+    "lint": "bunx tsc --noEmit"
+  },
+  "dependencies": {
+    "chokidar": "^6.0.0",
+    "gray-matter": "^4.0.3",
+    "remark": "^15.0.1",
+    "remark-gfm": "^4.0.1",
+    "tree-sitter-wasms": "^0.1.13",
+    "unist-util-visit": "^5.2.0",
+    "web-tree-sitter": "0.25.10"
+  },
+  "devDependencies": {
+    "@types/mdast": "^4.0.4",
+    "bun-types": "^1.4.4",
+    "typescript": "^7.0.2"
+  }
+}
