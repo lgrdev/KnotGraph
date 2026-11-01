@@ -1,0 +1,26 @@
+{
+  "name": "poc-06-real-graph",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "index": "bun run src/index.ts index",
+    "analyze": "bun run src/index.ts analyze",
+    "serve": "bun run src/index.ts serve",
+    "bench": "bun run src/index.ts bench",
+    "test": "bun test",
+    "lint": "bunx tsc --noEmit"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "chokidar": "^6.0.0",
+    "gray-matter": "^4.0.3",
+    "tree-sitter-wasms": "^0.1.13",
+    "web-tree-sitter": "0.25.10",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "bun-types": "^1.4.4",
+    "typescript": "^7.0.2"
+  }
+}
