@@ -79,9 +79,9 @@ Pour garantir la vélocité d'écriture du prototype (livrable rapidement) :
 
 * **Runtime :** Bun
 * **Langage :** TypeScript
-* **Parsing Code :** `web-tree-sitter` (Tree-sitter compilé en WASM pour JS/TS)
+* **Parsing Code :** `web-tree-sitter` (Tree-sitter compilé en WASM pour JS/TS, version épinglée `0.25.10`)
 * **Parsing Markdown :** `remark` / `gray-matter`
-* **Base de Données :** `better-sqlite3` (SQLite synchrone et ultra-rapide)
+* **Base de Données :** `bun:sqlite` (SQLite embarqué de Bun, synchrone et rapide)
 * **SDK MCP :** `@modelcontextprotocol/sdk` (SDK officiel TypeScript)
 
 ---

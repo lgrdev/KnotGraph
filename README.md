@@ -52,7 +52,7 @@ KnotGraph uses a high-performance hybrid architecture designed to run locally on
 │                                                                 │
 │  ┌───────────────────────┐       ┌───────────────────────────┐  │
 │  │     Core Indexer      │       │    Local Graph Database   │  │
-│  │ (Rust + Tree-sitter)  ├──────►│   (SQLite + sqlite-vec)   │  │
+│  │ (Bun + Tree-sitter)   ├──────►│   (SQLite + sqlite-vec)   │  │
 │  └───────────────────────┘       └─────────────┬─────────────┘  │
 │                                                │                │
 │                                                ▼                │
@@ -77,7 +77,7 @@ KnotGraph uses a high-performance hybrid architecture designed to run locally on
 
 ### Prerequisites
 
-- Node.js >= 18.x or Bun >= 1.0.0
+- Bun >= 1.0.0 (the indexer relies on `bun:sqlite`)
 - Git
 
 ### Installation
