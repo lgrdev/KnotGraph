@@ -18,7 +18,8 @@
 ### 1.2 Critères de succès (KPIs)
 * **Latence d'invalidation & réindexation :** $< 50\text{ms}$ par fichier modifié.
 * **Intégrité du `CLAUDE.md` :** $100\%$ de préservation des sections hors balises dynamiques (`<!-- KNOTGRAPH:START -->`).
-* **Consommation CPU/Mémoire :** Empreinte mémoire $< 50\text{MB}$ et CPU $\approx 0\%$ en attente.
+* **Consommation CPU/Mémoire :** Empreinte mémoire (RSS en régime établi, mode `watch` après l'indexation initiale) $< 100\text{MB}$ et CPU $\approx 0\%$ en attente. Le pic transitoire de l'indexation initiale n'est pas contraint par ce critère.
+  * *Décision (nov. 2026) :* la cible initiale de $50\text{MB}$ est abandonnée. Le runtime Bun, la pile WASM de tree-sitter et les dépendances occupent déjà ~$33\text{MB}$ (Bun + initialisation WASM) avant tout travail utile, ~$67\text{MB}$ avec le watcher et le rendu Markdown. Mesure du PoC 02 : ~$81\text{MB}$ sur un dépôt de 210 fichiers. Un indexeur natif (Rust) tiendrait en ~$7\text{MB}$ (PoC 04) mais n'est pas retenu à ce stade.
 
 ---
 
@@ -71,11 +72,11 @@
 
 ## 3. Stack Technique (PoC 02)
 
-* **Runtime :** Node.js ($\ge 18$) ou Bun
+* **Runtime :** Bun
 * **Watcher FS :** `chokidar`
-* **Parsing AST Code :** `web-tree-sitter`
+* **Parsing AST Code :** `web-tree-sitter` (version épinglée `0.25.10`, compatible avec les grammaires `tree-sitter-wasms`)
 * **Parsing & Transformation Markdown :** `remark`, `remark-gfm`, `unist-util-visit`
-* **Base de Données :** `better-sqlite3`
+* **Base de Données :** `bun:sqlite` (SQLite embarqué de Bun, API synchrone)
 
 ---
 

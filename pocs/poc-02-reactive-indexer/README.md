@@ -35,9 +35,10 @@ Add to your `CLAUDE.md` (markers are never inserted automatically):
 | CLAUDE.md regeneration p50 / p95 | 22 / 30 ms | (debounced 100 ms) |
 | Manual sections preserved | 100% (tests + bench) | 100% PASS |
 | Idle CPU (5 s) | ~0.4% in `watch` (2 ticks / 5 s), 0.8% in bench process | ~0% (PASS, < 1%) |
-| **RSS** | **~67 MB** watching a 4-file repo (bench process: ~166 MB) | **< 50 MB FAIL** |
+| RSS, steady state, `watch` | ~67 MB (4-file repo), **~81 MB** (210 files, after 100 edits) | < 100 MB PASS (spec relaxed from 50 MB) |
+| RSS peak during initial index (210 files) | ~165 MB | not constrained by the KPI |
 
-RSS breakdown measured: bare Bun 12 MB; Bun + `Parser.init()` (WASM) 33 MB; full `watch` 67 MB (grammar, chokidar, remark, SQLite). The 50 MB target is not reachable with this stack as specified; levers if it matters: lazy-load remark/grammars, drop remark for regex marker location.
+RSS breakdown measured: bare Bun 12 MB; Bun + `Parser.init()` (WASM) 33 MB; full `watch` 67 MB on a tiny repo, ~81 MB on 210 files. The original 50 MB target was not reachable with this stack; the decision (Nov 2026) is to keep Bun and set the target to < 100 MB steady-state RSS. The transient peak while indexing a cold repo (~165 MB) is the weak point; if it matters: lazy-load remark/grammars, index in smaller batches, or switch the indexer to the native Rust version (see `poc-04-rust-indexer`, ~7 MB).
 
 ## Limits
 - Regeneration of the whole `MAP` block takes ~20 ms (full queries); fine at this size, would need incremental rendering for large graphs.

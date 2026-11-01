@@ -15,6 +15,8 @@ cargo test --release               # 9 tests
 ./target/release/rust-indexer bench          # 200 files + 10 ADRs, 100 edits through the real watcher
 ```
 
+> Update (Nov 2026): the team kept Bun/TypeScript and relaxed the memory target to < 100 MB (PoC 02 measures ~81 MB on 210 files). This PoC stays as the documented plan B, not the chosen path.
+
 ## Results (this machine)
 | KPI | PoC 02 (Bun/TS) | PoC 04 (Rust) | Target |
 |---|---|---|---|

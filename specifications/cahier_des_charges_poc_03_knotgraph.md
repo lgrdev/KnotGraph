@@ -114,10 +114,10 @@ Où :
 
 ## 3. Stack Technique (PoC 03)
 
-* **Runtime :** Node.js ($\ge 18$) ou Bun
+* **Runtime :** Bun
 * **Langage :** TypeScript
-* **Moteur de Requêtes Graphe :** `better-sqlite3` (Requêtes récursives `WITH RECURSIVE`)
-* **Formatters :** Output JSON pour MCP + CLI Output colorisé (`chalk` / `boxen`)
+* **Moteur de Requêtes Graphe :** `bun:sqlite` (Requêtes récursives `WITH RECURSIVE`)
+* **Formatters :** Output JSON pour MCP + CLI Output colorisé (codes ANSI directs, sans dépendance `chalk` / `boxen`)
 
 ## 4. Structuration du dossier PoC
 

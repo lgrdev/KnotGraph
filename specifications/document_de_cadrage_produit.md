@@ -78,7 +78,7 @@ Le produit s'appuie sur une architecture hybride **Local-First pour la vélocit�
   │                                                             │
   │  ┌───────────────────────┐       ┌───────────────────────┐  │
   │  │  Moteur d'Indexation  │       │ Stockage Graphe Local │  │
-  │  │   Rust / Tree-sitter  ├──────►│  (SQLite + Extensions)│  │
+  │  │  Bun / Tree-sitter    ├──────►│  (SQLite + Extensions)│  │
   │  └───────────────────────┘       └───────────┬───────────┘  │
   │                                              │              │
   │                                              ▼              │
@@ -101,8 +101,8 @@ Le produit s'appuie sur une architecture hybride **Local-First pour la vélocit�
 
 | Composant | Technologie retenue | Rôle principal |
 |---|---|---|
-| **Core Indexer** | Rust + Tree-sitter | Parsing ultra-rapide du code (AST), extraction des symboles et dépendances localement. |
-| **Doc & Git Parser** | Go / TypeScript (Bun) | Ingestion des Markdown/ADRs, extraction des métadonnées, parsing des commits et diffs. |
+| **Core Indexer** | TypeScript (Bun) + `web-tree-sitter` (WASM) | Parsing du code (AST), extraction des symboles et dépendances localement. Empreinte cible $< 100\text{MB}$ (voir 5.4). |
+| **Doc & Git Parser** | TypeScript (Bun) | Ingestion des Markdown/ADRs, extraction des métadonnées, parsing des commits et diffs. |
 | **Graph Database** | SQLite (embarqué) + `sqlite-vec` / FalkorDB (serveur) | Stockage relationnel et vectoriel unifié des nœuds, arcs et embeddings de contexte. |
 | **Protocol Layer** | Serveur MCP (TypeScript SDK) | Exposition des outils avancés aux agents IA (Claude Code, Cursor, etc.). |
 | **Console Web** | Vue 3 + Vite + Cytoscape.js | Interface visuelle d'exploration du graphe, métriques de couverture et traçabilité pour les humains. |
@@ -147,6 +147,11 @@ $$\text{Metadata} = \{ \text{Source}, \text{CommitHash}, \text{Timestamp}, \text
 * **Risque :** Exfiltration de code source ou de documents d'entreprise sensibles.
 * **Mitigation :** Architecture *Local-First* par défaut. Le code et le graphe d'AST restent sur le poste du développeur. Seules les métadonnées de synchronisation sont partagées via le serveur d'équipe sécurisé.
 
+### 5.4 Empreinte Ressources de l'Indexeur Local
+* **Risque :** Un démon d'indexation résident gêne le poste du développeur s'il consomme trop de mémoire ou de CPU.
+* **Décision :** Stack TypeScript / Bun conservée, cible de **RSS $< 100\text{MB}$** en régime établi (cible initiale de $50\text{MB}$ abandonnée). Mesures PoC 02 : ~$81\text{MB}$ sur un dépôt de 210 fichiers (~$67\text{MB}$ sur un petit dépôt), pic transitoire ~$165\text{MB}$ pendant l'indexation initiale, CPU au repos $< 1\%$.
+* **Plan B documenté :** un indexeur natif Rust (PoC 04) tient en ~$7\text{MB}$ avec la même latence. Il n'est à engager que si la cible de mémoire se durcit ou si le pic d'indexation initiale pose problème (coût : second langage et binaire par plateforme). Les deux piles partageraient le même schéma SQLite.
+
 ---
 
 ## 6. Plan de Déploiement & Feuille de Route (Roadmap)
@@ -160,7 +165,7 @@ $$\text{Metadata} = \{ \text{Source}, \text{CommitHash}, \text{Timestamp}, \text
 ```
 
 1. **Phase 1 — Moteur d'AST & Serveur MCP Local (T1 2027)**
-   * Indexeur Rust / Tree-sitter pour les langages prioritaires (TypeScript, Python, Go).
+   * Indexeur Bun / `web-tree-sitter` pour les langages prioritaires (TypeScript, Python, Go).
    * Implémentation du serveur MCP local (SQLite).
    * Outils de navigation de code de base et blast radius structurel.
 
@@ -180,4 +185,5 @@ $$\text{Metadata} = \{ \text{Source}, \text{CommitHash}, \text{Timestamp}, \text
 
 * **Réduction du taux d'hallucination d'agent :** Retours d'agents IA mesurés avec $> 95\%$ de réponses étayées par une source exacte.
 * **Temps de mise à jour de l'index :** Invalidation et réindexation du code AST $< 200\text{ms}$ par commit local.
+* **Empreinte de l'indexeur local :** RSS $< 100\text{MB}$ en régime établi, CPU $\approx 0\%$ au repos.
 * **Adoption Développeur :** Réduction mesurée du temps d'analyse d'impact lors des revues de code et des refactorings complexes.
